@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["custom.regex"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Metabase version pinned in .metabase-version",
+      "managerFilePatterns": ["/^\\.metabase-version$/"],
+      "matchStrings": ["(?<currentValue>v\\d+(\\.\\d+)+)"],
+      "depNameTemplate": "metabase/metabase",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "loose"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Open-source Metabase only: stable 0.x tags. Enterprise releases are tagged 1.x, and pre-releases (-beta, -rc) are not deployed.",
+      "matchDepNames": ["metabase/metabase"],
+      "allowedVersions": "/^v0\\.\\d+(\\.\\d+)*$/"
+    }
+  ]
+}

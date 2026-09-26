@@ -62,6 +62,36 @@ Metabase also [supports many environment variables](https://www.metabase.com/doc
 
 [^1]: See https://wiki.openjdk.org/display/HotSpot/Metaspace for further details about Java Metaspace.
 
+# Pinning the Metabase Version (Edulib)
+
+The version deployed to `bi.edulib.fr` is pinned in
+[`.metabase-version`](.metabase-version), which
+[our buildpack](https://github.com/edulib-france/metabase-buildpack) reads at
+build time. Keeping it in git rather than in the app's environment means the
+deployed version is a reviewed diff, a rollback is a revert, and a bot can
+watch it:
+
+- **New releases**: Renovate opens a pull request bumping the file, with the
+  release notes in the description. Merging it deploys, because the app
+  auto-deploys from this repository. Only stable open-source releases are
+  proposed: enterprise builds are versioned `1.x`, pre-releases are skipped
+  (see [`renovate.json`](renovate.json)).
+- **Known vulnerabilities**: every Monday, and on every change to the pinned
+  version, [a workflow](.github/workflows/metabase-vulnerability-check.yml)
+  asks NVD whether the pinned version is affected by a published CVE, and opens
+  an issue when it is. It closes that issue once the version is no longer
+  affected. Renovate cannot do this itself: Metabase is a jar downloaded from
+  `downloads.metabase.com`, so it belongs to no package ecosystem the GitHub
+  Advisory Database can match a version against.
+
+Upgrading, then, is a one-line change to `.metabase-version`. Note that an
+upgrade migrates Metabase's application database, which a downgrade does not
+undo: restoring the previous version means restoring its database too.
+
+In an emergency, setting `METABASE_VERSION` on the app overrides the file and
+takes effect on the next deployment. Write the value back into the file
+afterwards and remove the variable, or the file stops having any effect.
+
 # Updating Metabase on Scalingo
 
 To upgrade to the latest version of Metabase, you only need to redeploy it,
