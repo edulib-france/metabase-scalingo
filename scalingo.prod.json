@@ -29,10 +29,6 @@
       "description": "Encrypts the connection secrets stored in the Metabase database: a restored database needs this exact value, or every saved connection is lost",
       "required": true
     },
-    "METABASE_VERSION": {
-      "description": "Metabase version installed by the buildpack. \"latest\" upgrades Metabase (and migrates its database) on every deployment: pin a version",
-      "value": "latest"
-    },
     "SCALINGO_APP_ERROR_URL": {
       "description": "Unavailability page shown by the Scalingo router",
       "value": "https://maintenance.edulib.fr/scalingo/app-error.html"
